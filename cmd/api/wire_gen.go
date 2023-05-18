@@ -7,8 +7,10 @@
 package main
 
 import (
+	"github.com/ManuelP84/calendar/business/task/usecase"
 	"github.com/ManuelP84/calendar/infra/app"
 	"github.com/ManuelP84/calendar/infra/http/server"
+	"github.com/ManuelP84/calendar/infra/postgres"
 )
 
 // Injectors from wire.go:
@@ -16,6 +18,9 @@ import (
 func CreateApp() *app.App {
 	engine := server.NewWebServer()
 	appSettings := app.GetAppSettings()
-	appApp := app.NewApp(engine, appSettings)
+	postgresDbSettings := app.GetPostgresBdSettings()
+	postgresRepository := postgres.NewPostgresRepository(postgresDbSettings)
+	taskUsecases := usecase.NewTaskUsecases(postgresRepository)
+	appApp := app.NewApp(engine, appSettings, taskUsecases)
 	return appApp
 }

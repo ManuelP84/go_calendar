@@ -3,22 +3,28 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	_ "github.com/lib/pq"
 
 	"github.com/ManuelP84/calendar/domain/task/models"
 )
 
+const (
+	DRIVER_NAME = "postgres"
+)
+
 type PostgresRepository struct {
 	db *sql.DB
 }
 
-func NewPostgresRepository(url string) (*PostgresRepository, error) {
-	db, err := sql.Open("postgres", url)
+func NewPostgresRepository(settings *PostgresDbSettings) *PostgresRepository {
+	addr := fmt.Sprintf("postgres://%s:%s@postgres/%s?sslmode=disable", settings.User, settings.Password, settings.Db)
+	db, err := sql.Open(DRIVER_NAME, addr)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	return &PostgresRepository{db}, nil
+	return &PostgresRepository{db}
 }
 
 func (repo *PostgresRepository) Close() {
