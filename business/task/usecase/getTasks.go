@@ -7,14 +7,14 @@ import (
 	"github.com/ManuelP84/calendar/domain/task/models"
 )
 
-type GetTasks struct {
+type GetAllTasks struct {
 	TaskRepository repositories.TaskRepository
 }
 
-func NewGetTasks(taskRepository repositories.TaskRepository) *GetTasks {
-	return &GetTasks{taskRepository}
+func NewGetAllTasks(taskRepository repositories.TaskRepository) *GetAllTasks {
+	return &GetAllTasks{taskRepository}
 }
 
-func (usecase *GetTasks) GetTasks(ctx context.Context) ([]*models.Task, error) {
+func (usecase *GetAllTasks) GetAllTasks(ctx context.Context) ([]*models.Task, error) {
 	return usecase.TaskRepository.GetTasks(ctx)
 }
