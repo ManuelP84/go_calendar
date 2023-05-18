@@ -9,5 +9,7 @@ func RegisterRoutes(app *app.App) *app.App {
 
 	taskGroup.GET("/all", getAllTasks(app.TaskUsecases.GetAllTasks))
 
+	taskGroup.POST("/create", insertTask(app.TaskUsecases.InsertTask))
+
 	return app
 }
