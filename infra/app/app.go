@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ManuelP84/calendar/business/task/usecase"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
@@ -12,12 +13,15 @@ import (
 type App struct {
 	WebServer *gin.Engine
 	Settings  *AppSettings
+
+	TaskUsecases *usecase.TaskUsecases
 }
 
-func NewApp(webServer *gin.Engine, settings *AppSettings) *App {
+func NewApp(webServer *gin.Engine, settings *AppSettings, taskUsecases *usecase.TaskUsecases) *App {
 	return &App{
-		WebServer: webServer,
-		Settings:  settings,
+		WebServer:    webServer,
+		Settings:     settings,
+		TaskUsecases: taskUsecases,
 	}
 }
 
