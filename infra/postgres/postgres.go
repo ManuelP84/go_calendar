@@ -12,6 +12,7 @@ import (
 
 const (
 	DRIVER_NAME = "postgres"
+	TASKS_TABLE = "tasks"
 )
 
 type PostgresRepository struct {
@@ -19,7 +20,7 @@ type PostgresRepository struct {
 }
 
 func NewPostgresRepository(settings *PostgresDbSettings) *PostgresRepository {
-	addr := fmt.Sprintf("postgres://%s:%s@postgres/%s?sslmode=disable", settings.User, settings.Password, settings.Db)
+	addr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", settings.User, settings.Password, settings.Host, settings.Port, settings.Db)
 	db, err := sql.Open(DRIVER_NAME, addr)
 	if err != nil {
 		panic(err)
@@ -32,8 +33,8 @@ func (repo *PostgresRepository) Close() {
 }
 
 func (repo *PostgresRepository) InsertTask(ctx context.Context, task *models.Task) error {
-	insert := "INSERT INTO tasks (id, title, description) values ($1, $2, $3)"
-	_, err := repo.db.ExecContext(ctx, insert, task.Id, task.Title, task.Description)
+	query := "INSERT INTO tasks (id, title, description) values ($1, $2, $3)"
+	_, err := repo.db.ExecContext(ctx, query, task.Id, task.Title, task.Description)
 	return err
 }
 
@@ -54,4 +55,10 @@ func (repo *PostgresRepository) GetTasks(ctx context.Context) ([]*models.Task, e
 		tasks = append(tasks, task)
 	}
 	return tasks, nil
+}
+
+func (repo *PostgresRepository) DeleteTaskById(ctx context.Context, id string) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", TASKS_TABLE)
+	_, err := repo.db.ExecContext(ctx, query, id)
+	return err
 }

@@ -11,5 +11,6 @@ func RegisterRoutes(app *app.App) *app.App {
 
 	taskGroup.POST("/create", insertTask(app.TaskUsecases.InsertTask))
 
+	taskGroup.DELETE("/delete/:id", deleteTaskById(app.TaskUsecases.DeleteTaskById))
 	return app
 }

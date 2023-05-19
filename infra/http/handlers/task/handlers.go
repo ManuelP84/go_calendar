@@ -41,3 +41,16 @@ func insertTask(usecase *usecase.InsertTask) gin.HandlerFunc {
 		c.JSON(http.StatusOK, "OK")
 	}
 }
+
+func deleteTaskById(usecase *usecase.DeleteTaskById) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+
+		id := c.Param("id")
+
+		if err := usecase.DeleteTaskById(ctx, id); err != nil {
+			c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		c.JSON(http.StatusOK, "OK")
+	}
+}
