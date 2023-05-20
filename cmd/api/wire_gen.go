@@ -11,6 +11,7 @@ import (
 	"github.com/ManuelP84/calendar/infra/app"
 	"github.com/ManuelP84/calendar/infra/http/server"
 	"github.com/ManuelP84/calendar/infra/postgres"
+	"github.com/ManuelP84/calendar/infra/rabbit/producer/task"
 )
 
 // Injectors from wire.go:
@@ -21,6 +22,8 @@ func CreateApp() *app.App {
 	postgresDbSettings := app.GetPostgresBdSettings()
 	postgresRepository := postgres.NewPostgresRepository(postgresDbSettings)
 	taskUsecases := usecase.NewTaskUsecases(postgresRepository)
-	appApp := app.NewApp(engine, appSettings, taskUsecases)
+	rabbitSettings := app.GetRabbitSettings()
+	taskProducer := task.NewTaskProducer(rabbitSettings)
+	appApp := app.NewApp(engine, appSettings, taskUsecases, taskProducer)
 	return appApp
 }

@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/ManuelP84/calendar/infra/postgres"
+	"github.com/ManuelP84/calendar/infra/rabbit"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -10,6 +11,7 @@ var instance *AppSettings
 type AppSettings struct {
 	Port     uint64 `envconfig:"PORT" required:"true"`
 	Postgres *postgres.PostgresDbSettings
+	Rabbit   *rabbit.RabbitSettings
 }
 
 func loadAppSettings() *AppSettings {
@@ -32,4 +34,8 @@ func GetAppSettings() *AppSettings {
 
 func GetPostgresBdSettings() *postgres.PostgresDbSettings {
 	return loadAppSettings().Postgres
+}
+
+func GetRabbitSettings() *rabbit.RabbitSettings {
+	return loadAppSettings().Rabbit
 }
