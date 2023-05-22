@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ManuelP84/calendar/domain/task/gateways/bus"
 	"github.com/ManuelP84/calendar/domain/task/gateways/repositories"
 	"github.com/ManuelP84/calendar/domain/task/models"
 )
@@ -14,10 +15,11 @@ const (
 
 type InsertTask struct {
 	TaskRepository repositories.TaskRepository
+	TaskBus        bus.TaskBus
 }
 
-func NewInsertTask(taskRepository repositories.TaskRepository) *InsertTask {
-	return &InsertTask{taskRepository}
+func NewInsertTask(taskRepository repositories.TaskRepository, taskBus bus.TaskBus) *InsertTask {
+	return &InsertTask{taskRepository, taskBus}
 }
 
 func (usecase *InsertTask) InsertTask(ctx context.Context, task *models.Task) error {
@@ -31,5 +33,7 @@ func (usecase *InsertTask) InsertTask(ctx context.Context, task *models.Task) er
 	if task.Description == emptyString {
 		return fmt.Errorf("description can't be empty")
 	}
-	return usecase.TaskRepository.InsertTask(ctx, task)
+	usecase.TaskRepository.InsertTask(ctx, task)
+
+	return usecase.TaskBus.Publish("Task created!")
 }

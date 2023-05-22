@@ -5,7 +5,7 @@ package main
 
 import (
 	"github.com/ManuelP84/calendar/business/task/usecase"
-	//"github.com/ManuelP84/calendar/domain/task/gateways/bus"
+	"github.com/ManuelP84/calendar/domain/task/gateways/bus"
 	"github.com/ManuelP84/calendar/domain/task/gateways/repositories"
 	"github.com/ManuelP84/calendar/infra/app"
 	"github.com/ManuelP84/calendar/infra/http/server"
@@ -25,7 +25,7 @@ func CreateApp() *app.App {
 		task.NewTaskProducer,
 		usecase.NewTaskUsecases,
 		wire.Bind(new(repositories.TaskRepository), new(*postgres.PostgresRepository)),
-		//wire.Bind(new(bus.TaskBus), new(*task.TaskProducer)),
+		wire.Bind(new(bus.TaskBus), new(*task.TaskProducer)),
 		app.NewApp,
 	)
 	return new(app.App)

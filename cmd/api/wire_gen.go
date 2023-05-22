@@ -21,9 +21,9 @@ func CreateApp() *app.App {
 	appSettings := app.GetAppSettings()
 	postgresDbSettings := app.GetPostgresBdSettings()
 	postgresRepository := postgres.NewPostgresRepository(postgresDbSettings)
-	taskUsecases := usecase.NewTaskUsecases(postgresRepository)
 	rabbitSettings := app.GetRabbitSettings()
 	taskProducer := task.NewTaskProducer(rabbitSettings)
-	appApp := app.NewApp(engine, appSettings, taskUsecases, taskProducer)
+	taskUsecases := usecase.NewTaskUsecases(postgresRepository, taskProducer)
+	appApp := app.NewApp(engine, appSettings, taskUsecases)
 	return appApp
 }

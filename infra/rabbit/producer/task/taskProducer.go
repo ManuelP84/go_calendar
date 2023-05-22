@@ -11,7 +11,11 @@ import (
 )
 
 const (
-	ExchangeName = "tasks"
+	exchangeName = "taskExchange"
+	//queueName     = "taskQueue"
+	//routingKey    = "taskEvents"
+	//exchangeType  = "fanout"
+	//prefetchCount = 10
 )
 
 type TaskProducer struct {
@@ -32,45 +36,32 @@ func NewTaskProducer(settings *rabbit.RabbitSettings) *TaskProducer {
 		log.Panicf("%s: %s", "Failed to open a channel", err)
 	}
 
-	return &TaskProducer{conn, ch}
-}
-
-func (p *TaskProducer) CloseConnection() {
-	p.connection.Close()
-}
-
-func (p *TaskProducer) CloseChannel() {
-	p.channel.Close()
-}
-
-func (p *TaskProducer) DeclareExchange() error {
-	err := p.channel.ExchangeDeclare(
-		ExchangeName, // name
-		"fanout",     // type
-		true,         // durable
-		false,        // auto-deleted
-		false,        // internal
-		false,        // no-wait
-		nil,          // arguments
+	err = ch.ExchangeDeclare(
+		exchangeName,
+		"fanout",
+		true,
+		false,
+		false,
+		false,
+		nil,
 	)
 
 	if err != nil {
 		log.Panicf("%s: %s", "Failed to declare an exchange", err)
 	}
-	return err
+
+	return &TaskProducer{conn, ch}
 }
 
 func (p *TaskProducer) Publish(mssge string) error {
-	defer p.CloseConnection()
-	defer p.CloseChannel()
-
-	p.DeclareExchange()
+	//defer p.CloseConnection()
+	//defer p.CloseChannel()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	err := p.channel.PublishWithContext(ctx,
-		ExchangeName, // exchange
+		exchangeName, // exchange
 		"",           // routing key
 		false,        // mandatory
 		false,        // immediate
