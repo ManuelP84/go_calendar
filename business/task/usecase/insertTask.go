@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	taskEvents "github.com/ManuelP84/calendar/domain/task"
 	"github.com/ManuelP84/calendar/domain/task/gateways/bus"
 	"github.com/ManuelP84/calendar/domain/task/gateways/repositories"
 	"github.com/ManuelP84/calendar/domain/task/models"
@@ -23,7 +24,6 @@ func NewInsertTask(taskRepository repositories.TaskRepository, taskBus bus.TaskB
 }
 
 func (usecase *InsertTask) InsertTask(ctx context.Context, task *models.Task) error {
-	// Some validations
 	if task == nil {
 		return fmt.Errorf("task can't be null")
 	}
@@ -35,5 +35,5 @@ func (usecase *InsertTask) InsertTask(ctx context.Context, task *models.Task) er
 	}
 	usecase.TaskRepository.InsertTask(ctx, task)
 
-	return usecase.TaskBus.Publish("taskCreated")
+	return usecase.TaskBus.Publish(taskEvents.TaskCreatedEvent)
 }

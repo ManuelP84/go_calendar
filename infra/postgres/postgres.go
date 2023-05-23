@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -33,8 +34,8 @@ func (repo *PostgresRepository) Close() {
 }
 
 func (repo *PostgresRepository) InsertTask(ctx context.Context, task *models.Task) error {
-	query := "INSERT INTO tasks (id, title, description) values ($1, $2, $3)"
-	_, err := repo.db.ExecContext(ctx, query, task.Id, task.Title, task.Description)
+	query := "INSERT INTO tasks (id, title, description, created_at) values ($1, $2, $3, $4)"
+	_, err := repo.db.ExecContext(ctx, query, task.Id, task.Title, task.Description, time.Now())
 	return err
 }
 

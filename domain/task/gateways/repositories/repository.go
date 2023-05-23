@@ -6,6 +6,7 @@ import (
 	"github.com/ManuelP84/calendar/domain/task/models"
 )
 
+//go:generate mockery --name TaskRepository
 type TaskRepository interface {
 	Close()
 	InsertTask(ctx context.Context, task *models.Task) error
