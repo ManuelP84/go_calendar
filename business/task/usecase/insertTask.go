@@ -35,5 +35,5 @@ func (usecase *InsertTask) InsertTask(ctx context.Context, task *models.Task) er
 	}
 	usecase.TaskRepository.InsertTask(ctx, task)
 
-	return usecase.TaskBus.Publish("Task created!")
+	return usecase.TaskBus.Publish("taskCreated")
 }
