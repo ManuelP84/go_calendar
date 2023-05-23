@@ -12,10 +12,8 @@ import (
 
 const (
 	exchangeName = "taskExchange"
-	//queueName     = "taskQueue"
-	//routingKey    = "taskEvents"
-	//exchangeType  = "fanout"
-	//prefetchCount = 10
+	routingKey   = "taskEvents"
+	exchangeType = "direct"
 )
 
 type TaskProducer struct {
@@ -38,7 +36,7 @@ func NewTaskProducer(settings *rabbit.RabbitSettings) *TaskProducer {
 
 	err = ch.ExchangeDeclare(
 		exchangeName,
-		"fanout",
+		exchangeType,
 		true,
 		false,
 		false,
@@ -54,17 +52,15 @@ func NewTaskProducer(settings *rabbit.RabbitSettings) *TaskProducer {
 }
 
 func (p *TaskProducer) Publish(mssge string) error {
-	//defer p.CloseConnection()
-	//defer p.CloseChannel()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	err := p.channel.PublishWithContext(ctx,
-		exchangeName, // exchange
-		"",           // routing key
-		false,        // mandatory
-		false,        // immediate
+		exchangeName,
+		routingKey,
+		false,
+		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(mssge),
