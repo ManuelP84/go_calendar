@@ -7,8 +7,9 @@
 package main
 
 import (
+	"github.com/ManuelP84/calendar/app"
 	"github.com/ManuelP84/calendar/business/task/usecase"
-	"github.com/ManuelP84/calendar/infra/app"
+	"github.com/ManuelP84/calendar/infra/config"
 	"github.com/ManuelP84/calendar/infra/http/server"
 	"github.com/ManuelP84/calendar/infra/postgres"
 	"github.com/ManuelP84/calendar/infra/rabbit/producer/task"
@@ -18,10 +19,10 @@ import (
 
 func CreateApp() *app.App {
 	engine := server.NewWebServer()
-	appSettings := app.GetAppSettings()
-	postgresDbSettings := app.GetPostgresBdSettings()
+	appSettings := config.GetAppSettings()
+	postgresDbSettings := config.GetPostgresBdSettings()
 	postgresRepository := postgres.NewPostgresRepository(postgresDbSettings)
-	rabbitSettings := app.GetRabbitSettings()
+	rabbitSettings := config.GetRabbitSettings()
 	taskProducer := task.NewTaskProducer(rabbitSettings)
 	taskUsecases := usecase.NewTaskUsecases(postgresRepository, taskProducer)
 	appApp := app.NewApp(engine, appSettings, taskUsecases)

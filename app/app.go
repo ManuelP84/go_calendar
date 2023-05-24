@@ -6,17 +6,18 @@ import (
 	"log"
 
 	"github.com/ManuelP84/calendar/business/task/usecase"
+	"github.com/ManuelP84/calendar/infra/config"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/sync/errgroup"
 )
 
 type App struct {
 	WebServer    *gin.Engine
-	Settings     *AppSettings
+	Settings     *config.AppSettings
 	TaskUsecases *usecase.TaskUsecases
 }
 
-func NewApp(webServer *gin.Engine, settings *AppSettings, taskUsecases *usecase.TaskUsecases) *App {
+func NewApp(webServer *gin.Engine, settings *config.AppSettings, taskUsecases *usecase.TaskUsecases) *App {
 	return &App{
 		WebServer:    webServer,
 		Settings:     settings,

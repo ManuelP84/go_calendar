@@ -1,7 +1,7 @@
 package task
 
 import (
-	"github.com/ManuelP84/calendar/infra/app"
+	"github.com/ManuelP84/calendar/app"
 )
 
 func RegisterRoutes(app *app.App) *app.App {
