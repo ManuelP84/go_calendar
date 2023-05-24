@@ -9,6 +9,7 @@ type TaskUsecases struct {
 	GetAllTasks    *GetAllTasks
 	InsertTask     *InsertTask
 	DeleteTaskById *DeleteTaskById
+	SearchTaskById *SearchTaskById
 }
 
 func NewTaskUsecases(taskRepository repositories.TaskRepository, taskBus bus.TaskBus) *TaskUsecases {
@@ -16,5 +17,6 @@ func NewTaskUsecases(taskRepository repositories.TaskRepository, taskBus bus.Tas
 		GetAllTasks:    NewGetAllTasks(taskRepository),
 		InsertTask:     NewInsertTask(taskRepository, taskBus),
 		DeleteTaskById: NewDeleteTaskById(taskRepository),
+		SearchTaskById: NewSearchTaskById(taskRepository),
 	}
 }

@@ -12,4 +12,5 @@ type TaskRepository interface {
 	InsertTask(ctx context.Context, task *models.Task) error
 	GetTasks(ctx context.Context) ([]*models.Task, error)
 	DeleteTaskById(ctx context.Context, id string) error
+	SearchTaskById(ctx context.Context, id string) (*models.Task, error)
 }

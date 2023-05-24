@@ -30,7 +30,7 @@ func insertTask(usecase *usecase.InsertTask) gin.HandlerFunc {
 		var task models.Task
 
 		if err := c.BindJSON(&task); err != nil {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -49,8 +49,23 @@ func deleteTaskById(usecase *usecase.DeleteTaskById) gin.HandlerFunc {
 		id := c.Param("id")
 
 		if err := usecase.DeleteTaskById(ctx, id); err != nil {
-			c.JSON(http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusNoContent, err.Error())
 		}
-		c.JSON(http.StatusOK, "OK")
+		c.JSON(http.StatusAccepted, "OK")
+	}
+}
+
+func getTaskById(usecase *usecase.SearchTaskById) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+
+		id := c.Param("id")
+
+		task, err := usecase.SearchTaskById(ctx, id)
+
+		if err != nil {
+			c.JSON(http.StatusNoContent, err.Error())
+		}
+		c.JSON(http.StatusOK, task)
 	}
 }

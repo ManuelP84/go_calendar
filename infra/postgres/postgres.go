@@ -59,7 +59,24 @@ func (repo *PostgresRepository) GetTasks(ctx context.Context) ([]*models.Task, e
 }
 
 func (repo *PostgresRepository) DeleteTaskById(ctx context.Context, id string) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", TASKS_TABLE)
-	_, err := repo.db.ExecContext(ctx, query, id)
+	selectQuery := fmt.Sprintf("SELECT id, title, description, created_at FROM %s WHERE id = $1", TASKS_TABLE)
+	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", TASKS_TABLE)
+	row := repo.db.QueryRowContext(ctx, selectQuery, id)
+	task := &models.Task{}
+	if err := row.Scan(&task.Id, &task.Title, &task.Description, &task.CreatedAt); err != nil {
+		return err
+	}
+	_, err := repo.db.ExecContext(ctx, deleteQuery, id)
+
 	return err
+}
+
+func (repo *PostgresRepository) SearchTaskById(ctx context.Context, id string) (*models.Task, error) {
+	query := fmt.Sprintf("SELECT id, title, description, created_at FROM %s WHERE id = $1", TASKS_TABLE)
+	row := repo.db.QueryRowContext(ctx, query, id)
+	task := &models.Task{}
+	if err := row.Scan(&task.Id, &task.Title, &task.Description, &task.CreatedAt); err != nil {
+		return nil, err
+	}
+	return task, nil
 }
