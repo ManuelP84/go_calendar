@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	taskEvents "github.com/ManuelP84/calendar/domain/task"
+	taskEvents "github.com/ManuelP84/calendar/domain/task/events"
 	"github.com/ManuelP84/calendar/domain/task/gateways/bus"
 	"github.com/ManuelP84/calendar/domain/task/gateways/repositories"
 	"github.com/ManuelP84/calendar/domain/task/models"
@@ -35,5 +35,10 @@ func (usecase *InsertTask) InsertTask(ctx context.Context, task *models.Task) er
 	}
 	usecase.TaskRepository.InsertTask(ctx, task)
 
-	return usecase.TaskBus.Publish(taskEvents.TaskCreatedEvent)
+	taskCreatedEvent := taskEvents.TaskEvent{
+		EventType: taskEvents.TaskCreatedEvent,
+		Task:      task,
+	}
+
+	return usecase.TaskBus.Publish(taskCreatedEvent)
 }

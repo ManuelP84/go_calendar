@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/ManuelP84/calendar/domain/task/events"
 	"github.com/ManuelP84/calendar/infra/rabbit"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -51,19 +52,25 @@ func NewTaskProducer(settings *rabbit.RabbitSettings) *TaskProducer {
 	return &TaskProducer{conn, ch}
 }
 
-func (p *TaskProducer) Publish(mssge string) error {
+func (p *TaskProducer) Publish(event events.TaskEvent) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err := p.channel.PublishWithContext(ctx,
+	serializedEvent, err := rabbit.Serialize(event)
+
+	if err != nil {
+		log.Panicf("%s: %s", "Failed to serialize message", err)
+	}
+
+	err = p.channel.PublishWithContext(ctx,
 		exchangeName,
 		routingKey,
 		false,
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        []byte(mssge),
+			Body:        []byte(serializedEvent),
 		})
 
 	if err != nil {

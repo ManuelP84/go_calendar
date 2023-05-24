@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	taskEvents "github.com/ManuelP84/calendar/domain/task"
+	"github.com/ManuelP84/calendar/domain/task/events"
 	busMocks "github.com/ManuelP84/calendar/domain/task/gateways/bus/mocks"
 	repoMocks "github.com/ManuelP84/calendar/domain/task/gateways/repositories/mocks"
 	"github.com/ManuelP84/calendar/domain/task/models"
@@ -31,13 +31,18 @@ func TestInsertTask(t *testing.T) {
 		Description: "First task description",
 	}
 
+	taskCreatedEvent := events.TaskEvent{
+		EventType: events.TaskCreatedEvent,
+		Task:      task,
+	}
+
 	taskRepository := repoMocks.NewTaskRepository(t)
 	taskProducer := busMocks.NewTaskBus(t)
 
 	usecase := NewInsertTask(taskRepository, taskProducer)
 
 	taskRepository.On("InsertTask", ctx, task).Return(nil)
-	taskProducer.On("Publish", taskEvents.TaskCreatedEvent).Return(nil)
+	taskProducer.On("Publish", taskCreatedEvent).Return(nil)
 
 	err := usecase.InsertTask(ctx, task)
 
