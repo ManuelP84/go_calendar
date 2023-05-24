@@ -69,3 +69,22 @@ func getTaskById(usecase *usecase.SearchTaskById) gin.HandlerFunc {
 		c.JSON(http.StatusOK, task)
 	}
 }
+
+func updateTask(usecase *usecase.UpdateTask) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+
+		var task models.Task
+
+		if err := c.BindJSON(&task); err != nil {
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		if err := usecase.UpdateTask(ctx, &task); err != nil {
+			c.JSON(http.StatusBadRequest, err.Error())
+			return
+		}
+		c.JSON(http.StatusOK, "OK")
+	}
+}

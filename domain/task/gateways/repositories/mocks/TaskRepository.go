@@ -99,6 +99,20 @@ func (_m *TaskRepository) SearchTaskById(ctx context.Context, id string) (*model
 	return r0, r1
 }
 
+// UpdateTask provides a mock function with given fields: ctx, task
+func (_m *TaskRepository) UpdateTask(ctx context.Context, task *models.Task) error {
+	ret := _m.Called(ctx, task)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *models.Task) error); ok {
+		r0 = rf(ctx, task)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewTaskRepository interface {
 	mock.TestingT
 	Cleanup(func())

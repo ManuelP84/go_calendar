@@ -39,6 +39,18 @@ func (repo *PostgresRepository) InsertTask(ctx context.Context, task *models.Tas
 	return err
 }
 
+func (repo *PostgresRepository) UpdateTask(ctx context.Context, task *models.Task) error {
+	selectQuery := fmt.Sprintf("SELECT id, title, description, created_at FROM %s WHERE id = $1", TASKS_TABLE)
+	updateQuery := "UPDATE tasks SET title = $2, description = $3 WHERE id = $1"
+	row := repo.db.QueryRowContext(ctx, selectQuery, task.Id)
+	searchedTask := &models.Task{}
+	if err := row.Scan(&searchedTask.Id, &searchedTask.Title, &searchedTask.Description, &searchedTask.CreatedAt); err != nil {
+		return err
+	}
+	_, err := repo.db.ExecContext(ctx, updateQuery, task.Id, task.Title, task.Description)
+	return err
+}
+
 func (repo *PostgresRepository) GetTasks(ctx context.Context) ([]*models.Task, error) {
 	query := "SELECT id, title, description, created_at FROM tasks"
 	rows, err := repo.db.QueryContext(ctx, query)
@@ -67,7 +79,6 @@ func (repo *PostgresRepository) DeleteTaskById(ctx context.Context, id string) e
 		return err
 	}
 	_, err := repo.db.ExecContext(ctx, deleteQuery, id)
-
 	return err
 }
 
