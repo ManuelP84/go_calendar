@@ -1,9 +1,23 @@
 package server
 
-import "github.com/gin-gonic/gin"
+import (
+	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+)
 
 func NewWebServer() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 
-	return gin.Default()
+	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"*"},
+		AllowHeaders:  []string{"*"},
+		ExposeHeaders: []string{"Content-Length"},
+		MaxAge:        12 * time.Hour,
+	}))
+	return router
 }
